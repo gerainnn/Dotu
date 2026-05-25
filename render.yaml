@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: dotu-poker
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: BOT_TOKEN
+        sync: false   # set this in the Render dashboard
+      - key: WEBAPP_URL
+        sync: false   # set this to https://<your-service>.onrender.com after first deploy
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000  # Render assigns a port via $PORT, but works with anything
