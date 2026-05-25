@@ -1,0 +1,8 @@
+{
+  "name": "Dotu Poker",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "postCreateCommand": "pip install -r requirements.txt && curl -sL -o /usr/local/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && chmod +x /usr/local/bin/cloudflared",
+  "forwardPorts": [8080],
+  "portsAttributes": { "8080": { "label": "Dotu", "visibility": "public" } },
+  "remoteEnv": { "PORT": "8080", "HOST": "0.0.0.0" }
+}
