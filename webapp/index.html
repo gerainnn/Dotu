@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0b0e" />
+<title>Dotu Poker</title>
+<link rel="stylesheet" href="/static/style.css" />
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span class="brand-name">Dotu</span>
+      </div>
+      <div class="balance" id="balance">— <span class="balance-label">chips</span></div>
+    </header>
+
+    <!-- Views -->
+    <main id="view-lobby" class="view active">
+      <section class="hero">
+        <h1>Texas Hold&rsquo;em</h1>
+        <p class="muted">Sit down with three opponents.<br/>One hand at a time.</p>
+        <button class="primary big" id="btn-play">Play hand</button>
+      </section>
+
+      <section class="quick-stats">
+        <div class="stat"><div class="stat-value" id="stat-hands">0</div><div class="stat-label">Hands</div></div>
+        <div class="stat"><div class="stat-value" id="stat-wins">0</div><div class="stat-label">Wins</div></div>
+        <div class="stat"><div class="stat-value" id="stat-rate">0%</div><div class="stat-label">Win&nbsp;rate</div></div>
+      </section>
+
+      <section class="how">
+        <h3>House rules</h3>
+        <ul class="muted">
+          <li>Blinds 5 / 10. Each seat starts the hand with 1000 chips.</li>
+          <li>Your bankroll carries between hands. Daily 2500 starting chips.</li>
+          <li>No real money. Cosmetics only.</li>
+        </ul>
+      </section>
+    </main>
+
+    <main id="view-poker" class="view">
+      <div class="table" id="poker-table">
+        <!-- opponents -->
+        <div class="seat seat-2" data-seat="2"></div>
+        <div class="seat seat-1" data-seat="1"></div>
+        <div class="seat seat-3" data-seat="3"></div>
+
+        <!-- table center -->
+        <div class="felt-center">
+          <div class="pot" id="pot">Pot 0</div>
+          <div class="board" id="board"></div>
+          <div class="stage-label" id="stage-label">preflop</div>
+        </div>
+
+        <!-- hero -->
+        <div class="seat seat-0 hero-seat" data-seat="0"></div>
+
+        <!-- result overlay -->
+        <div class="result-overlay" id="result-overlay" hidden>
+          <div class="result-card">
+            <div class="result-title" id="result-title">Hand over</div>
+            <div class="result-delta" id="result-delta">+0</div>
+            <div class="result-detail muted" id="result-detail"></div>
+            <div class="result-actions">
+              <button class="ghost" id="btn-leave">Leave</button>
+              <button class="primary" id="btn-next">Next hand</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" id="actions">
+        <button class="action danger" data-act="fold">Fold</button>
+        <button class="action neutral" data-act="check">Check</button>
+        <button class="action accent" data-act="raise">Raise</button>
+      </div>
+      <div class="raise-bar" id="raise-bar" hidden>
+        <input type="range" id="raise-slider" min="0" max="100" value="50" />
+        <div class="raise-display" id="raise-display">0</div>
+      </div>
+    </main>
+
+    <main id="view-shop" class="view">
+      <h2 class="view-title">Shop</h2>
+      <div class="tabs" id="shop-tabs">
+        <button class="tab active" data-cat="card_back">Card backs</button>
+        <button class="tab" data-cat="chip_style">Chips</button>
+        <button class="tab" data-cat="table_felt">Felt</button>
+      </div>
+      <div class="shop-grid" id="shop-grid"></div>
+    </main>
+
+    <main id="view-profile" class="view">
+      <h2 class="view-title">Profile</h2>
+      <div class="profile-card">
+        <div class="avatar" id="avatar"></div>
+        <div class="profile-info">
+          <div class="profile-name" id="profile-name">—</div>
+          <div class="muted" id="profile-handle">@—</div>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat-row"><span>Balance</span><b id="p-balance">0</b></div>
+        <div class="stat-row"><span>Level</span><b id="p-level">1</b></div>
+        <div class="stat-row"><span>Hands played</span><b id="p-hands">0</b></div>
+        <div class="stat-row"><span>Hands won</span><b id="p-wins">0</b></div>
+        <div class="stat-row"><span>Win rate</span><b id="p-rate">0%</b></div>
+      </div>
+
+      <h3 class="section-title">Equipped</h3>
+      <div class="equipped-grid" id="equipped-grid"></div>
+    </main>
+
+    <!-- Bottom nav -->
+    <nav class="nav" id="nav">
+      <button class="nav-btn active" data-view="lobby">
+        <svg viewBox="0 0 24 24"><path d="M3 12 12 3l9 9v9h-6v-6H9v6H3z"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-btn" data-view="shop">
+        <svg viewBox="0 0 24 24"><path d="M3 7h18l-1.5 11a2 2 0 0 1-2 1.7H6.5a2 2 0 0 1-2-1.7L3 7zm5 0a4 4 0 0 1 8 0"/></svg>
+        <span>Shop</span>
+      </button>
+      <button class="nav-btn" data-view="profile">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+    <div id="toast" class="toast" hidden></div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
