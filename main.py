@@ -85,6 +85,20 @@ async def on_start(msg: Message) -> None:
     await msg.answer(text, reply_markup=_open_keyboard())
 
 
+async def _set_global_menu_button() -> None:
+    """Set the bot's default menu button to open the Mini App for everyone."""
+    if not WEBAPP_URL:
+        return
+    from aiogram.types import MenuButtonWebApp
+    try:
+        await bot.set_chat_menu_button(
+            menu_button=MenuButtonWebApp(text="Play", web_app=WebAppInfo(url=WEBAPP_URL))
+        )
+        log.info("Default chat menu button set to %s", WEBAPP_URL)
+    except Exception as e:
+        log.warning("set_chat_menu_button failed: %s", e)
+
+
 @dp.message(F.text == "/play")
 async def on_play(msg: Message) -> None:
     await msg.answer("Open the table:", reply_markup=_open_keyboard())
@@ -105,6 +119,8 @@ games = GameManager()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    # set the global menu button so users see "Play" at the bottom of chat
+    await _set_global_menu_button()
     # start polling alongside HTTP
     polling_task = asyncio.create_task(dp.start_polling(bot, handle_signals=False))
     log.info("Bot polling started.")
